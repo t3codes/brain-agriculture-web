@@ -1,1 +1,27 @@
-<p>layout works!</p>
+<div class="container-page">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Alterna navegação">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" [routerLink]="'/producers'">Produtores<span class="sr-only"></span></a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="#">Destaques</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Preços</a></li>
+        <li class="nav-item"><a class="nav-link disabled" href="#">Desativado</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+
+  <footer class="py-3 my-4">
+    <p class="text-center text-body-secondary">© 2025 Tharlles Silva Té, Inc</p>
+  </footer>
+</div>

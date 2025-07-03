@@ -1,0 +1,17 @@
+/* FORÇA o tamanho das legendas - abordagem direta */
+::ng-deep .ngx-charts .legend-labels text {
+  font-size: 14px !important; /* Ajuste o tamanho conforme necessário */
+  font-weight: bold !important;
+}
+
+/* Aumenta os labels dentro do gráfico */
+::ng-deep .ngx-charts .pie-label text {
+  font-size: 12px !important;
+  fill: #333 !important;
+}
+
+/* Aumenta o container da legenda */
+::ng-deep .ngx-charts .legend-wrap {
+  width: auto !important;
+  padding: 10px !important;
+}
