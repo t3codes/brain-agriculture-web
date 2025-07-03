@@ -3,6 +3,8 @@ import { Signin } from './pages/signin/signin';
 import { Signup } from './pages/signup/signup';
 import { Layout } from './pages/layout/layout';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { authGuard } from './guard/auth-guard';
+import { Producer } from './pages/producer/producer';
 
 export const routes: Routes = [
   // Rotas públicas (sem layout)
@@ -27,7 +29,13 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        component: Dashboard
+        component: Dashboard,
+        canActivate:[authGuard]
+      },
+      {
+        path: 'producers',
+        component: Producer,
+        canActivate: [authGuard]
       }
     ]
   }

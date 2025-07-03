@@ -1,0 +1,21 @@
+::ng-deep .chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep ngx-charts-pie-chart {
+  margin-bottom: 0;
+}
+
+::ng-deep .legend {
+  margin-top: -20px !important;
+}
+
+::ng-deep .legend-label {
+  font-size: 13px;
+  max-width: 140px;
+  white-space: normal !important;
+  word-break: break-word;
+}

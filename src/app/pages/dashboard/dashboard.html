@@ -1,1 +1,49 @@
-<p>dashboard works!</p>
+<div class="container mt-4">
+  <h2 class="mb-3">Dashboard</h2>
+  <p><strong>Total de Fazendas:</strong> {{ totalFarms }}</p>
+  <p><strong>Total de Hectares:</strong> {{ totalHectares }}</p>
+  <hr />
+  <div class="row">
+    <div class="col-md-4 chart-container">
+      <h5>Fazendas por Estado</h5>
+      <ngx-charts-pie-chart
+        [view]="view"
+        [results]="chartByState"
+        [legend]="true"
+        [labels]="true"
+        [doughnut]="false"
+        [explodeSlices]="false"
+        [animations]="true"
+        [legendPosition]="legendPosition">
+      </ngx-charts-pie-chart>
+    </div>
+
+    <div class="col-md-4 chart-container">
+      <h5>Fazendas por Cultura</h5>
+      <ngx-charts-pie-chart
+        [view]="view"
+        [results]="chartByCrop"
+        [legend]="true"
+        [labels]="true"
+        [doughnut]="false"
+        [explodeSlices]="false"
+        [animations]="true"
+        [legendPosition]="legendPosition">
+      </ngx-charts-pie-chart>
+    </div>
+
+    <div class="col-md-4 chart-container">
+      <h5>Uso do Solo</h5>
+      <ngx-charts-pie-chart
+        [view]="view"
+        [results]="chartLandUse"
+        [legend]="true"
+        [labels]="true"
+        [doughnut]="true"
+        [explodeSlices]="true"
+        [animations]="true"
+        [legendPosition]="legendPosition">
+      </ngx-charts-pie-chart>
+    </div>
+  </div>
+</div>

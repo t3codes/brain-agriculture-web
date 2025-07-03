@@ -1,15 +1,17 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { catchError, finalize } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { ApiService } from '../../core/api.service';
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './signin.html',
-  styleUrl: './signin.scss'
+  styleUrls: ['./signin.scss']
 })
 export class Signin {
   signinObj = {
@@ -24,6 +26,9 @@ export class Signin {
   };
 
   @ViewChild('container') containerRef!: ElementRef<HTMLDivElement>;
+  isLoading = false;
+
+  constructor(private api: ApiService, private router: Router) { }
 
   ngAfterViewInit(): void {
     const signUpBtn = document.getElementById('sign-up-btn');
@@ -40,10 +45,6 @@ export class Signin {
     }
   }
 
-  isLoading = false;
-
-  constructor(private http: HttpClient) {}
-
   onLogin(): void {
     if (!this.signinObj.email || !this.signinObj.password) {
       alert('Por favor, preencha o e-mail e a senha.');
@@ -52,28 +53,31 @@ export class Signin {
 
     this.isLoading = true;
 
-    this.http.post<{ accessToken: string }>(
-      'http://127.0.0.1:3000/api/v1/auth/login',
-      this.signinObj
-    ).pipe(
-      catchError((error: HttpErrorResponse) => {
-        this.isLoading = false;
-        if (error.status === 401) {
-          alert('Credenciais inválidas.');
-        } else {
-          alert('Erro ao conectar com o servidor.');
-        }
-        return throwError(() => error);
-      })
-    ).subscribe(res => {
-      this.isLoading = false;
-      if (res?.accessToken) {
-        alert('Login bem-sucedido');
-        // Salvar token e redirecionar se quiser
-      } else {
-        alert('Erro ao verificar os dados. Tente novamente.');
-      }
-    });
+    this.api.post<{ accessToken: string }>('auth/login', this.signinObj, false)
+      .pipe(
+        catchError(error => {
+          this.isLoading = false;
+          if (error.status === 401) {
+            alert('Credenciais inválidas.');
+          } else {
+            alert('Erro ao conectar com o servidor.');
+          }
+          return throwError(() => error);
+        }),
+        finalize(() => this.isLoading = false) // Garante que isLoading será false em qualquer caso
+      )
+      .subscribe({
+        next: (res) => {
+          if (res?.accessToken) {
+            alert('Login bem-sucedido');
+            localStorage.setItem('accessToken', res.accessToken);
+            this.router.navigateByUrl('dashboard');
+          } else {
+            alert('Erro ao verificar os dados. Tente novamente.');
+          }
+        },
+        error: () => { } // Já tratado no catchError
+      });
   }
 
   onRegister(): void {
@@ -84,20 +88,20 @@ export class Signin {
 
     this.isLoading = true;
 
-    this.http.post<{ message: string }>(
-      'http://127.0.0.1:3000/api/v1/users/create/accounts',
-      this.registerObj
-    ).pipe(
-      catchError((error: HttpErrorResponse) => {
-        this.isLoading = false;
-        alert('Erro ao registrar usuário. Tente novamente.');
-        return throwError(() => error);
-      })
-    ).subscribe(res => {
-      this.isLoading = false;
-      alert(res?.message || 'Cadastro realizado com sucesso!');
-      // Opcional: já mudar para tela de login automaticamente
-      this.containerRef.nativeElement.classList.remove('sign-up-mode');
-    });
+    this.api.post<{ message: string }>('users/create/accounts', this.registerObj, false)
+      .pipe(
+        catchError(error => {
+          alert('Erro ao registrar usuário. Tente novamente.');
+          return throwError(() => error);
+        }),
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: (res) => {
+          alert(res?.message || 'Cadastro realizado com sucesso!');
+          this.containerRef.nativeElement.classList.remove('sign-up-mode');
+        },
+        error: () => { } // Já tratado no catchError
+      });
   }
 }
