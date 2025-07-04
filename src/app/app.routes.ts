@@ -1,41 +1,30 @@
 import { Routes } from '@angular/router';
-import { Signin } from './pages/signin/signin';
-import { Signup } from './pages/signup/signup';
-import { Layout } from './pages/layout/layout';
-import { Dashboard } from './pages/dashboard/dashboard';
-import { authGuard } from './guard/auth-guard';
-import { Producer } from './pages/producer/producer';
+import { authGuard, NoAuthGuard } from './guard/auth-guard';
 
 export const routes: Routes = [
-  // Rotas públicas (sem layout)
+  { path: '', redirectTo: 'signin', pathMatch: 'full' },
   {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
-  },
-  {
-    path: 'login',
-    component: Signin
+    path: 'signin',
+    loadComponent: () => import('./pages/signin/signin').then(m => m.Signin),
+    canActivate: [NoAuthGuard],
   },
   {
     path: 'signup',
-    component: Signup
+    loadComponent: () => import('./pages/signup/signup').then(m => m.Signup)
   },
-
-  // Rotas autenticadas (com layout)
   {
     path: '',
-    component: Layout,
+    loadComponent: () => import('./pages/layout/layout').then(m => m.Layout),
     children: [
       {
         path: 'dashboard',
-        component: Dashboard,
-        canActivate:[authGuard]
+        loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.Dashboard),
+        canActivate: [authGuard],
       },
       {
         path: 'producers',
-        component: Producer,
-        canActivate: [authGuard]
+        loadComponent: () => import('./pages/producer/producer').then(m => m.Producer),
+        canActivate: [authGuard],
       }
     ]
   }

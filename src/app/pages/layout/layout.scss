@@ -12,3 +12,15 @@ html, body {
 .content {
   flex: 1;
 }
+
+.nav-link.router-link-active {
+  font-weight: bold;
+  color: #007bff !important;
+  border-bottom: 2px solid #007bff;
+}
+
+.nav-link.active {
+  font-weight: bold;
+  color: #0d6efd !important; // azul Bootstrap
+  border-bottom: 2px solid #0d6efd;
+}

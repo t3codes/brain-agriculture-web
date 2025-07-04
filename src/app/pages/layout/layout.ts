@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-layout',
@@ -11,4 +11,7 @@ import { CommonModule } from '@angular/common';
 })
 export class Layout {
   title = "testando 1 2 3"
+  ngOnInit() {
+    console.log('LayoutComponent carregado');
+  }
 }

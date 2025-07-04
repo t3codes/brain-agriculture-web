@@ -1,1 +1,234 @@
-<p>producer works!</p>
+<div class="container-fluid mt-4">
+    <div class="panel panel-default border p-4 shadow-sm bg-white rounded">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-4">
+                <form class="form-inline d-flex flex-wrap justify-content-between">
+                    <div class="form-group flex-fill me-2 mb-2">
+                        <label for="inputPassword2" class="visually-hidden">Senha</label>
+                        <input type="text" class="form-control w-100" id="inputPassword2" placeholder="Senha">
+                    </div>
+                    <div class="form-group mb-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-success">Buscar Item</button>
+                        <button type="button" class="btn btn-dark" (click)="openCreateModal(createModal)">
+                            Novo Cadastro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered w-100">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>CPF/CNPJ</th>
+                            <th>Nome do Produtor</th>
+                            <th>Registrado em</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let producer of producers">
+                            <td>{{ producer.id }}</td>
+                            <td>{{ producer.cpfOrCnpj }}</td>
+                            <td>{{ producer.name }}</td>
+                            <td>{{ producer.createdAt }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-dark me-2" (click)="onGet(producer, producerModal)">
+                                    Ver
+                                </button>
+                                <button class="btn btn-sm btn-dark me-2" (click)="openEditModal(producer, editModal)">
+                                    Editar
+                                </button>
+                                <button class="btn btn-sm btn-dark" (click)="onDelete(producer.id)">
+                                    Apagar
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de listagem de produtores -->
+<ng-template #producerModal let-modal>
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h4 class="modal-title">Detalhes Completos do Produtor</h4>
+                <button type="button" class="btn-close btn-close-white" (click)="modal.dismiss()"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div *ngIf="selectedProducer; else loading">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex mb-2">
+                                <span class="fw-bold me-2" style="min-width: 120px;">ID:</span>
+                                <span>{{ selectedProducer.id }}</span>
+                            </div>
+                            <div class="d-flex mb-2">
+                                <span class="fw-bold me-2" style="min-width: 120px;">Nome:</span>
+                                <span>{{ selectedProducer.name }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-2">
+                                <span class="fw-bold me-2" style="min-width: 120px;">CPF/CNPJ:</span>
+                                <span>{{ selectedProducer.cpfOrCnpj }}</span>
+                            </div>
+                            <div class="d-flex mb-2">
+                                <span class="fw-bold me-2" style="min-width: 120px;">Cadastrado em:</span>
+                                <span>{{ selectedProducer.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="mb-3 border-bottom pb-2">
+                        <i class="bi bi-house-door me-2"></i>Fazendas Cadastradas
+                    </h5>
+                    <div *ngIf="selectedProducer.farms?.length; else noFarms">
+                        <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
+                            <table class="table table-hover table-bordered table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th style="width: 25%">Fazenda</th>
+                                        <th style="width: 15%">Localização</th>
+                                        <th style="width: 15%" class="text-end">Área Total</th>
+                                        <th style="width: 15%" class="text-end">Agricultável</th>
+                                        <th style="width: 15%" class="text-end">Vegetação</th>
+                                        <th style="width: 15%" class="text-end">Área Livre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let farm of selectedProducer.farms">
+                                        <td>{{ farm.name }}</td>
+                                        <td>{{ farm.city }}/{{ farm.state }}</td>
+                                        <td class="text-end">{{ farm.totalArea | number:'1.2-2' }} ha</td>
+                                        <td class="text-end">{{ farm.arableArea | number:'1.2-2' }} ha</td>
+                                        <td class="text-end">{{ farm.vegetationArea | number:'1.2-2' }} ha</td>
+                                        <td class="text-end">
+                                            {{ (farm.totalArea - farm.arableArea - farm.vegetationArea) | number:'1.2-2'
+                                            }} ha
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <ng-template #noFarms>
+                        <div class="alert alert-warning text-center py-3">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Nenhuma fazenda cadastrada para este produtor
+                        </div>
+                    </ng-template>
+                </div>
+                <ng-template #loading>
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-3">Carregando dados do produtor...</p>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" (click)="modal.close()">
+                    <i class="bi bi-x-circle me-1"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #createModal let-modal>
+    <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+            <h5 class="modal-title fw-bold">
+                <i class="bi bi-person-plus me-3"></i>
+                Cadastrar Novo Produtor
+            </h5>
+            <button type="button" class="btn-close btn-close-white" (click)="modal.dismiss()"
+                aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+            <form (ngSubmit)="onSubmit(modal); modal.close()" class="needs-validation" novalidate>
+                <div class="mb-4">
+                    <label for="cpfCnpj" class="form-label fw-semibold">CPF/CNPJ</label>
+                    <input type="text" class="form-control form-control-lg" id="cpfCnpj"
+                        [(ngModel)]="newProducer.cpfOrCnpj" name="cpfOrCnpj" placeholder="Digite o CPF ou CNPJ"
+                        required>
+                    <div class="invalid-feedback">
+                        Por favor, informe o CPF ou CNPJ
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="producerName" class="form-label fw-semibold">Nome Completo</label>
+                    <input type="text" class="form-control form-control-lg" id="producerName"
+                        [(ngModel)]="newProducer.name" name="name" placeholder="Digite o nome completo" required>
+                    <div class="invalid-feedback">
+                        Por favor, informe o nome do produtor
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pt-4">
+                    <button type="button" class="btn btn-outline-secondary px-4" (click)="modal.dismiss()">
+                        <i class="bi bi-x-lg me-2"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-dark px-4">
+                        <i class="bi bi-check-lg me-2"></i> Cadastrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- Modal de update de produtos -->
+<ng-template #editModal let-modal>
+    <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-light"> <!-- Cabeçalho amarelo para diferenciar -->
+            <h5 class="modal-title fw-bold">
+                <i class="bi bi-pencil-square me-3"></i> <!-- Ícone de edição -->
+                Editar Produtor
+            </h5>
+            <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+            <form (ngSubmit)="onUpdate(); modal.close()" class="needs-validation" novalidate>
+                <div class="mb-4">
+                    <label for="editCpfCnpj" class="form-label fw-semibold">CPF/CNPJ</label>
+                    <input type="text" class="form-control form-control-lg" id="editCpfCnpj"
+                        [(ngModel)]="editProducerData.cpfOrCnpj" name="editCpfCnpj" required>
+                    <div class="invalid-feedback">
+                        Por favor, informe o CPF ou CNPJ
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="editProducerName" class="form-label fw-semibold">Nome Completo</label>
+                    <input type="text" class="form-control form-control-lg" id="editProducerName"
+                        [(ngModel)]="editProducerData.name" name="editName" required>
+                    <div class="invalid-feedback">
+                        Por favor, informe o nome do produtor
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pt-4">
+                    <button type="button" class="btn btn-outline-secondary px-4" (click)="modal.dismiss()">
+                        <i class="bi bi-x-lg me-2"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-dark text-white px-4"> <!-- Botão amarelo -->
+                        <i class="bi bi-check-lg me-2"></i> Atualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
