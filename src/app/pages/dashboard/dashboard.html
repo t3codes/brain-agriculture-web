@@ -1,8 +1,10 @@
-<div class="container mt-4">
+<!-- CONTEÚDO DO DASHBOARD -->
+<div *ngIf="!isLoading && !errorMessage">
   <h2 class="mb-3">Dashboard</h2>
-  <p><strong>Total de Fazendas:</strong> {{ totalFarms }}</p>
-  <p><strong>Total de Hectares:</strong> {{ totalHectares }}</p>
+  <p><strong>Total de Fazendas:</strong> {{ data.totalFarms }}</p>
+  <p><strong>Total de Hectares:</strong> {{ data.totalHectares }}</p>
   <hr />
+
   <div class="row">
     <div class="col-md-4 chart-container">
       <h5>Fazendas por Estado</h5>

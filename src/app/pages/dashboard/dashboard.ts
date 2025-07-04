@@ -1,12 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxChartsModule, LegendPosition } from '@swimlane/ngx-charts';
-import { catchError, finalize, map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
 import { ApiService } from '../../core/api.service';
-import { ByCrop, ByState, IDashboardState, loadDashboard } from '../../store/auth.state';
-import { Store } from '@ngrx/store';
-import { DashboardService } from './store/dashboard.redux';
+import { IDashboardState } from './store/dashboard.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,10 +13,9 @@ import { DashboardService } from './store/dashboard.redux';
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
-  totalFarms = 0;
-  totalHectares = 0;
   isLoading = true;
   errorMessage = '';
+  data!: IDashboardState;
 
   chartByState: any[] = [];
   chartByCrop: any[] = [];
@@ -28,38 +24,39 @@ export class Dashboard implements OnInit {
   view: [number, number] = [500, 400];
   legendPosition = LegendPosition.Below;
 
-  constructor(
-    private api: ApiService,
-    private dashboardService: DashboardService
-  ) { }
+  constructor(private api: ApiService, private router: Router, private cdRef: ChangeDetectorRef) { }
 
-  byState$!: Observable<ByState[]>;
-  byCrop$!: Observable<ByCrop[]>;
+  ngOnInit(): void {
+    this.isLoading = true;
 
+    this.api.get<IDashboardState>('dashboard/overview').subscribe({
+      next: (res) => {
+        this.data = res;
 
- ngOnInit(): void {
-    this.dashboardService.loadDashboard();
+        this.chartByState = res.byState.map((s) => ({
+          name: s.state,
+          value: s.total,
+        }));
 
-    this.dashboardService.dashboard$.subscribe((state) => {
-      this.totalFarms = state.totalFarms;
-      this.totalHectares = state.totalHectares;
+        this.chartByCrop = res.byCrop.map((c) => ({
+          name: c.name,
+          value: c.total,
+        }));
 
-      this.chartByState = state.byState.map(s => ({
-        name: s.state,
-        value: s.total
-      }));
+        this.chartLandUse = [
+          { name: 'Área Agricultável', value: res.landUse.arableArea },
+          { name: 'Vegetação', value: res.landUse.vegetationArea },
+        ];
 
-      this.chartByCrop = state.byCrop.map(c => ({
-        name: c.name,
-        value: c.total
-      }));
+        this.isLoading = false;
 
-      this.chartLandUse = [
-        { name: 'Área Agricultável', value: state.landUse.arableArea },
-        { name: 'Vegetação', value: state.landUse.vegetationArea }
-      ];
+        // Forçando a detecção de mudanças após a resposta
+        this.cdRef.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error(err);
+      }
     });
   }
 }
-
-

@@ -64,19 +64,19 @@ export class Signin {
           }
           return throwError(() => error);
         }),
-        finalize(() => this.isLoading = false) // Garante que isLoading será false em qualquer caso
+        finalize(() => this.isLoading = false) 
       )
       .subscribe({
         next: (res) => {
           if (res?.accessToken) {
             alert('Login bem-sucedido');
             localStorage.setItem('accessToken', res.accessToken);
-            this.router.navigateByUrl('dashboard');
+            this.router.navigateByUrl('dashboard', { replaceUrl: true });
           } else {
             alert('Erro ao verificar os dados. Tente novamente.');
           }
         },
-        error: () => { } // Já tratado no catchError
+        error: () => { } 
       });
   }
 
@@ -101,7 +101,7 @@ export class Signin {
           alert(res?.message || 'Cadastro realizado com sucesso!');
           this.containerRef.nativeElement.classList.remove('sign-up-mode');
         },
-        error: () => { } // Já tratado no catchError
+        error: () => { } 
       });
   }
 }

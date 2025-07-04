@@ -1,0 +1,35 @@
+/* Modal grande - ocupa 70% da largura e altura */
+.custom-modal {
+  max-width: 70% !important;   /* Largura máxima */
+  max-height: 70vh;            /* Altura máxima */
+}
+
+.custom-modal .modal-content {
+  height: 100%;                /* Preenche toda a altura do dialog */
+  overflow-y: auto;            /* Adiciona scroll se necessário */
+  border-radius: 8px;
+}
+
+.custom-modal .modal-body {
+  overflow-y: auto;
+  max-height: 60vh;            /* Para que só o body tenha rolagem */
+}
+
+
+.modal-content {
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer {
+  border-top: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+  border-color: #495057;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}

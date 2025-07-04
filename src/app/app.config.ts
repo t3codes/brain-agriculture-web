@@ -1,17 +1,20 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter, withRouterConfig } from '@angular/router';  // importando withRouterConfig
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideZonelessChangeDetection, provideBrowserGlobalErrorListeners } from '@angular/core';
 
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { AuthInterceptor } from './core/auth.interceptor';
 import { ApiService } from './core/api.service';
-import { DashboardService } from './pages/dashboard/store/dashboard.redux';
+import { DashboardService } from './pages/dashboard/store/dashboard.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes),
-    provideHttpClient(),
+    // Usando withRouterConfig para customizar o roteamento
+    provideRouter(routes, withRouterConfig({ onSameUrlNavigation: 'reload' })),  
+    provideHttpClient(withInterceptors([AuthInterceptor])),
     ApiService,
     DashboardService,
   ]
