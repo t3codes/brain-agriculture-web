@@ -33,3 +33,22 @@
   border-color: #495057;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
+
+/* Adicione ao seu arquivo SCSS */
+.modal-xl {
+    max-width: 1200px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Estilo para as datas na tabela */
+td {
+    white-space: nowrap;
+}
+
+/* Espaçamento no modal */
+.modal-body {
+    padding: 20px;
+}
