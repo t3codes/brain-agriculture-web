@@ -9,10 +9,6 @@ export const routes: Routes = [
     canActivate: [NoAuthGuard],
   },
   {
-    path: 'signup',
-    loadComponent: () => import('./pages/signup/signup').then(m => m.Signup)
-  },
-  {
     path: '',
     loadComponent: () => import('./pages/layout/layout').then(m => m.Layout),
     children: [
